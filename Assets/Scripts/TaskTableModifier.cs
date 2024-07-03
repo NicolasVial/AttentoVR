@@ -10,7 +10,8 @@ public class TaskTableModifier : MonoBehaviour
 
     [SerializeField] private Transform[] transforms;
 
-    [SerializeField] private GameObject rightArmHintGO;
+    [SerializeField] private GameObject rightArmHintGOFemale;
+    [SerializeField] private GameObject rightArmHintGOMale;
     [SerializeField] private GameObject elbowSphere;
 
     // Start is called before the first frame update
@@ -22,7 +23,8 @@ public class TaskTableModifier : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rightArmHintGO.transform.position = elbowSphere.transform.position;
+        rightArmHintGOFemale.transform.position = elbowSphere.transform.position;
+        rightArmHintGOMale.transform.position = elbowSphere.transform.position;
     }
 
     private void Awake()

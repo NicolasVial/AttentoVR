@@ -7,9 +7,16 @@ using UnityEngine.InputSystem;
 public class IncongruencyController : MonoBehaviour
 {
     [SerializeField] private InputActionReference incongruencyInput;
-    [SerializeField] private GameObject head;
-    [SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRig;
-    [SerializeField] private TextMeshProUGUI incongruencyTxt;
+    [SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigMale;
+    [SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigFemale;
+    [SerializeField] private TextMeshProUGUI angleTxt;
+    [SerializeField] private GameObject elbowSphere;
+    [SerializeField] private GameObject elbowSpherePoint2;
+    [SerializeField] private GameObject rightHand;
+
+    private float diffAngleDegree = 0f;
+    private float angleReductionDegree = 1f;
+    private float actualAngle = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -20,8 +27,42 @@ public class IncongruencyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // update incugruency text and put it in centimeters
-        incongruencyTxt.text = "Incongruency: " + (IKTargetFollowVRRig.rightHand.trackingPositionOffset.x * 100).ToString("F2") + " cm";
+ 
+        /*
+         * Get the angle formed by the line formed by the elbowSphere and elbowSpherePoint2 and the line formed by the elbowSphere and the rightHandPos in the x,z plan.
+         * The angle must run in an anticlockwise direction from the line formed by the elbowSphere and elbowSpherePoint2 to the line formed by the elbowSphere and the rightHandPos.
+         */
+        
+        Vector2 elbowSphereToRightHand = new Vector2(rightHand.transform.position.x - elbowSphere.transform.position.x, rightHand.transform.position.z - elbowSphere.transform.position.z);
+        Vector2 elbowSphereToElbowSpherePoint2 = new Vector2(elbowSpherePoint2.transform.position.x - elbowSphere.transform.position.x, elbowSpherePoint2.transform.position.z - elbowSphere.transform.position.z);
+        float angle = Vector2.SignedAngle(elbowSphereToElbowSpherePoint2, elbowSphereToRightHand);
+        angle -= 180;
+        if (angle < 0)
+        {
+            angle += 180;
+        }
+        angle = 180 - angle;
+        actualAngle = angle;
+
+
+        /*
+         * We now want to add an incongruency to the angle formed by the line formed by the elbowSphere and elbowSpherePoint2 and the line formed by the elbowSphere and the rightHandPos in the x,z plan. To apply the incongruency,
+         * we need to find the values for the variable IKTargetFollowVRRigMale.rightHand.trackingRotationOffset.y and IKTargetFollowVRRigFemale.rightHand.trackingPositionOffset.
+         */
+        Vector2 elbowSphereToIKTarget = new Vector2(rightHand.transform.position.x - elbowSphere.transform.position.x, rightHand.transform.position.z - elbowSphere.transform.position.z);
+        float realX = rightHand.transform.position.x - elbowSphere.transform.position.x;
+        float realZ = rightHand.transform.position.z - elbowSphere.transform.position.z;
+        float incongruencyAngle = diffAngleDegree + angle - 90f;
+        float incongruencyAngleRad = incongruencyAngle * Mathf.Deg2Rad;
+        float incongruencyX = Mathf.Sin(incongruencyAngleRad) * elbowSphereToIKTarget.magnitude;
+        float incongruencyZ = Mathf.Cos(incongruencyAngleRad) * elbowSphereToIKTarget.magnitude;
+        float incongruencyXDiff = incongruencyX - realX;
+        float incongruencyZDiff = incongruencyZ - realZ;
+        IKTargetFollowVRRigMale.rightHand.trackingPositionOffset = new Vector3(incongruencyXDiff, -incongruencyZDiff, 0);
+        IKTargetFollowVRRigFemale.rightHand.trackingPositionOffset = new Vector3(incongruencyXDiff, -incongruencyZDiff, 0);
+
+        // update incugruency text in degrees
+        angleTxt.text = "Angle: " + angle.ToString("F2") + " degrees";
     }
 
     private void Awake()
@@ -40,25 +81,37 @@ public class IncongruencyController : MonoBehaviour
         float x = val.x;
         if (x > 0)
         {
-            MoveHeadLeft();
+            MakeAngleLarger();
         }
         else
         {
-            MoveHeadRight();
+            MakeAngleSmaller();
         }
     }
 
-    private void MoveHeadRight()
+    private void MakeAngleSmaller()
     {
-        head.transform.position += new Vector3(0.0025f, 0, 0);
-        IKTargetFollowVRRig.rightHand.trackingPositionOffset = new Vector3(IKTargetFollowVRRig.rightHand.trackingPositionOffset.x - 0.0025f, IKTargetFollowVRRig.rightHand.trackingPositionOffset.y, IKTargetFollowVRRig.rightHand.trackingPositionOffset.z);
+        diffAngleDegree -= angleReductionDegree;
     }
 
-    private void MoveHeadLeft()
+    private void MakeAngleLarger()
     {
-        head.transform.position += new Vector3(-0.0025f, 0, 0);
-        IKTargetFollowVRRig.rightHand.trackingPositionOffset = new Vector3(IKTargetFollowVRRig.rightHand.trackingPositionOffset.x + 0.0025f, IKTargetFollowVRRig.rightHand.trackingPositionOffset.y, IKTargetFollowVRRig.rightHand.trackingPositionOffset.z);
+        diffAngleDegree += angleReductionDegree;
     }
 
+    public void SetIncongruencyAngle(float newDiffAngle)
+    {
+        diffAngleDegree = newDiffAngle;
+    }
+
+    public float GetAngle()
+    {
+        return actualAngle;
+    }
+
+    public float GetIncongruencyAngle()
+    {
+        return diffAngleDegree + actualAngle;    
+    }
 
 }

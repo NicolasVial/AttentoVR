@@ -7,6 +7,7 @@ public class VRMap
     public Transform ikTarget;
     public Vector3 trackingPositionOffset;
     public Vector3 trackingRotationOffset;
+    public Vector3 localtrackingPositionOffset;
     public void Map(bool isHead)
     {
         if (isHead)
@@ -18,6 +19,7 @@ public class VRMap
         {
             ikTarget.position = vrTarget.TransformPoint(trackingPositionOffset);
             ikTarget.rotation = vrTarget.rotation * Quaternion.Euler(trackingRotationOffset);
+            ikTarget.localPosition = new Vector3(ikTarget.localPosition.x + localtrackingPositionOffset.x, ikTarget.localPosition.y+localtrackingPositionOffset.y, ikTarget.localPosition.z+ localtrackingPositionOffset.z);
         }
        
     }
