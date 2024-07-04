@@ -70,7 +70,7 @@ public class TaskTableModifier : MonoBehaviour
     {
         foreach(Transform t in transforms)
         {
-            t.position += new Vector3(0.0025f, 0, 0);
+            t.position += new Vector3(0.002f, 0, 0);
         }
     }
 
@@ -78,7 +78,7 @@ public class TaskTableModifier : MonoBehaviour
     {
         foreach(Transform t in transforms)
         {
-            t.position += new Vector3(-0.0025f, 0, 0);
+            t.position += new Vector3(-0.002f, 0, 0);
         }
     }
 
@@ -86,7 +86,7 @@ public class TaskTableModifier : MonoBehaviour
     {
         foreach(Transform t in transforms)
         {
-            t.position += new Vector3(0, 0.0025f, 0);
+            t.position += new Vector3(0, 0.002f, 0);
         }
     }
 
@@ -94,7 +94,7 @@ public class TaskTableModifier : MonoBehaviour
     {
         foreach(Transform t in transforms)
         {
-            t.position += new Vector3(0, -0.0025f, 0);
+            t.position += new Vector3(0, -0.002f, 0);
         }
     }
 

@@ -128,6 +128,7 @@ public class MenuManager : MonoBehaviour
 
     public void PressStartTaskButton()
     {
+        incongruencyController.SetIncongruencyAngle(incongruencyAngleDegree);
         if (seeArm)
         {
             femaleBody.SetActive(true);
@@ -161,7 +162,6 @@ public class MenuManager : MonoBehaviour
         {
             incongruencyTxt.text = incongruencyAngleDegree.ToString() + " deg";
         }
-        incongruencyController.SetIncongruencyAngle(incongruencyAngleDegree);
     }
 
     public void PressDecreaseIncAngle()
@@ -175,7 +175,6 @@ public class MenuManager : MonoBehaviour
         {
             incongruencyTxt.text = incongruencyAngleDegree.ToString() + " deg";
         }
-        incongruencyController.SetIncongruencyAngle(incongruencyAngleDegree);
     }
 
     public void PressIncreaseNbTrials()
