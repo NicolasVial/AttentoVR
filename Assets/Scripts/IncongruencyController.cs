@@ -10,6 +10,7 @@ public class IncongruencyController : MonoBehaviour
     [SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigMale;
     [SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigFemale;
     [SerializeField] private TextMeshProUGUI angleTxt;
+    [SerializeField] private TextMeshProUGUI incongruencyTxt;
     [SerializeField] private GameObject elbowSphere;
     [SerializeField] private GameObject elbowSpherePoint2;
     [SerializeField] private GameObject rightHand;
@@ -62,7 +63,8 @@ public class IncongruencyController : MonoBehaviour
         IKTargetFollowVRRigFemale.rightHand.trackingPositionOffset = new Vector3(incongruencyXDiff, -incongruencyZDiff, 0);
 
         // update incugruency text in degrees
-        angleTxt.text = "Angle: " + angle.ToString("F2") + " degrees";
+        angleTxt.text = "Angle: " + angle.ToString("F2");
+        incongruencyTxt.text = "Incongruency: " + diffAngleDegree.ToString("F2");
     }
 
     private void Awake()
