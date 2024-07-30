@@ -12,6 +12,7 @@ public class TaskLogic : MonoBehaviour
     [SerializeField] private IncongruencyController incongruencyController;
     [SerializeField] private MenuManager menuManager;
     [SerializeField] private GameObject rightHand;
+    [SerializeField] private ParametersReader parametersReader;
 
     private int nbTrials = 1;
     private bool taskStarted = false;
@@ -23,6 +24,15 @@ public class TaskLogic : MonoBehaviour
     private float secondAngle = 0f;
     private bool pauseRec = false;
     private Vector3 previousPos;
+    private float firstAngleIncongruency = 0f;
+    private float secondAngleIncongruency = 0f;
+    private bool seeArm = true;
+    private List<List<string>> parameters = new List<List<string>>();
+    private float previousAngle = 0f;
+
+    [Header("Real time angle values.")]
+    public float actualAngle;
+    public float actualIncongruencyAngle;
 
     // Start is called before the first frame update
     void Start()
@@ -33,19 +43,31 @@ public class TaskLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        actualAngle = incongruencyController.GetAngle();
+        actualIncongruencyAngle = incongruencyController.GetDiffAngle();
+
         if(triggerPressed)
         {
             if(triggerCounter == 1)
             {
-                   firstAngle = incongruencyController.GetAngle();
+                previousAngle = incongruencyController.GetAngle();
             }
             if(triggerCounter == 2)
             {
+                firstAngle = previousAngle - incongruencyController.GetAngle();
+                incongruencyController.SetIncongruencyAngle(secondAngleIncongruency);
+            }
+            if(triggerCounter == 3)
+            {
+                previousAngle = incongruencyController.GetAngle();
+            }
+            if(triggerCounter == 4)
+            {
                 pauseRec = true;
-                secondAngle = incongruencyController.GetAngle();
+                secondAngle = previousAngle - incongruencyController.GetAngle();
                 taskLogger.WriteToFile("-------------------------------------------------------------");
-                taskLogger.WriteToFile("First angle = " + firstAngle + ".");
-                taskLogger.WriteToFile("Second angle = " + secondAngle + ".");
+                taskLogger.WriteToFile("First angle = " + firstAngle + ". With incongruency = " + firstAngleIncongruency + ".");
+                taskLogger.WriteToFile("Second angle = " + secondAngle + ". With incongruency = " + secondAngleIncongruency + ".");
                 taskLogger.WriteToFile("Finished trial " + trialCounter + ".");
                 taskLogger.WriteToFile("-------------------------------------------------------------");
                 trialCounter++;
@@ -70,26 +92,51 @@ public class TaskLogic : MonoBehaviour
             menuManager.ResetMenu();
         }
 
-        if(triggerCounter == 2)
+        if(triggerCounter == 4)
         {
-            taskLogger.WriteToFile("Starting trial " + trialCounter + "...");
             pauseRec = false;
             triggerCounter = 0;
-            trialNbTxt.text = trialCounter.ToString() + "/" + nbTrials.ToString();
+            SetupTrial();
         }
-    }
-
-    public void SetNbTrials(int newNbTrials)
-    {
-        nbTrials = newNbTrials;
     }
 
     public void StartTask()
     {
-        taskStarted = true;
+        parameters = parametersReader.ReadParameters();
+        nbTrials = parameters.Count;
         trialCounter = 1;
-        trialNbTxt.text = trialCounter.ToString() + "/" + nbTrials.ToString();
+        SetParameters(trialCounter);
+        
+        taskLogger.WriteToFile("Number of trials: " + nbTrials.ToString());
+        taskLogger.WriteToFile("-------------------------------------------------------------");
+        
+        
+        SetupTrial();
+        taskStarted = true;
         StartCoroutine(StartLogging());
+    }
+
+    private void SetupTrial()
+    {
+        trialNbTxt.text = trialCounter.ToString() + "/" + nbTrials.ToString();
+        SetParameters(trialCounter);
+        if (seeArm)
+        {
+            menuManager.ShowAvatars();
+        }
+        else
+        {
+            menuManager.HideAvatars();
+        }
+        taskLogger.WriteToFile("Starting trial " + trialCounter.ToString() + "...");
+        incongruencyController.SetIncongruencyAngle(firstAngleIncongruency);
+    }
+
+    private void SetParameters(int trialNb)
+    {
+        seeArm = bool.Parse(parameters[trialCounter - 1][0]);
+        firstAngleIncongruency = float.Parse(parameters[trialCounter - 1][1]);
+        secondAngleIncongruency = float.Parse(parameters[trialCounter - 1][2]);
     }
 
     public IEnumerator StartLogging()

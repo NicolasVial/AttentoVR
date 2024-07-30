@@ -14,25 +14,14 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject maleBody;
     [SerializeField] private GameObject femaleBody;
 
-    [SerializeField] private GameObject avatarOrGlassPanel;
     [SerializeField] private GameObject avatarSelectionPanel;
-    [SerializeField] private GameObject ParametersPanel;
     [SerializeField] private GameObject StartTaskPanel;
     [SerializeField] private GameObject TaskPanel;
 
-    [Header("Parameters variables")]
-    [SerializeField] private TextMeshProUGUI incongruencyTxt;
-    [SerializeField] private TextMeshProUGUI nbOfTrialsTxt;
-
-    [SerializeField] private IncongruencyController incongruencyController;
     [SerializeField] private TaskLogic taskLogic;
     [SerializeField] private TaskLogger taskLogger;
 
-
-    private float incongruencyAngleDegree = 0f;
-    private int nbOfTrials = 1;
     private AvatarGender avatarGender;
-    private bool seeArm = true;
 
     public enum AvatarGender
     {
@@ -56,17 +45,9 @@ public class MenuManager : MonoBehaviour
 
     private void InitPanels()
     {
-        avatarOrGlassPanel.SetActive(true);
-        avatarSelectionPanel.SetActive(false);
-        ParametersPanel.SetActive(false);
+        avatarSelectionPanel.SetActive(true);
         StartTaskPanel.SetActive(false);
         TaskPanel.SetActive(false);
-        incongruencyAngleDegree = 0f;
-        incongruencyController.SetIncongruencyAngle(incongruencyAngleDegree);
-        incongruencyTxt.text = "+" + incongruencyAngleDegree.ToString() + " deg";
-        nbOfTrials = 1;
-        nbOfTrialsTxt.text = nbOfTrials.ToString();
-        taskLogic.SetNbTrials(nbOfTrials);
         rightHand.enabled = false;
         leftHand.enabled = true;
         maleAvatar.SetActive(false);
@@ -80,38 +61,11 @@ public class MenuManager : MonoBehaviour
         InitPanels();
     }
 
-    public void PressAvatarButton()
-    {
-        avatarOrGlassPanel.SetActive(false);
-        avatarSelectionPanel.SetActive(true);
-        seeArm = true;
-    }
-
-    public void PressGlassButton()
-    {
-        avatarOrGlassPanel.SetActive(false);
-        avatarSelectionPanel.SetActive(true);
-        seeArm = false;
-    }
-
     public void PressMaleAvatarButton()
     {
         avatarSelectionPanel.SetActive(false);
-        ParametersPanel.SetActive(true);
-        avatarGender = AvatarGender.Male;
-    }
-
-    public void PressFemaleAvatarButton()
-    {
-        avatarSelectionPanel.SetActive(false);
-        ParametersPanel.SetActive(true);
-        avatarGender = AvatarGender.Female;
-    }
-
-    public void PressEndParametersButton()
-    {
-        ParametersPanel.SetActive(false);
         StartTaskPanel.SetActive(true);
+        avatarGender = AvatarGender.Male;
         femaleBody.SetActive(true);
         maleBody.SetActive(true);
         if (avatarGender == AvatarGender.Male)
@@ -126,71 +80,45 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    public void PressStartTaskButton()
+    public void PressFemaleAvatarButton()
     {
-        incongruencyController.SetIncongruencyAngle(incongruencyAngleDegree);
-        if (seeArm)
+        avatarSelectionPanel.SetActive(false);
+        StartTaskPanel.SetActive(true);
+        avatarGender = AvatarGender.Female;
+        femaleBody.SetActive(true);
+        maleBody.SetActive(true);
+        if (avatarGender == AvatarGender.Male)
         {
-            femaleBody.SetActive(true);
-            maleBody.SetActive(true);
+            maleAvatar.SetActive(true);
+            femaleAvatar.SetActive(false);
         }
         else
         {
-            femaleBody.SetActive(false);
-            maleBody.SetActive(false);
+            femaleAvatar.SetActive(true);
+            maleAvatar.SetActive(false);
         }
+    }
+
+    public void ShowAvatars()
+    {
+        femaleBody.SetActive(true);
+        maleBody.SetActive(true);
+    }
+
+    public void HideAvatars()
+    {
+        femaleBody.SetActive(false);
+        maleBody.SetActive(false);
+    }
+
+
+    public void PressStartTaskButton()
+    {
         taskLogger.StartTaskLogging();
         StartTaskPanel.SetActive(false);
         TaskPanel.SetActive(true);
         rightHand.enabled = false;
         leftHand.enabled = false;
-        taskLogger.WriteToFile("Number of trials: " + nbOfTrials.ToString());
-        taskLogger.WriteToFile("Incongruency angle: " + incongruencyAngleDegree.ToString());
-        taskLogger.WriteToFile("-------------------------------------------------------------");
-        taskLogger.WriteToFile("Starting trial 1...");
         taskLogic.StartTask();
-    }
-
-    public void PressIncreaseIncAngle()
-    {
-        incongruencyAngleDegree += 1f;
-        if(incongruencyAngleDegree >= 0)
-        {
-            incongruencyTxt.text = "+" + incongruencyAngleDegree.ToString() + " deg";
-        }
-        else
-        {
-            incongruencyTxt.text = incongruencyAngleDegree.ToString() + " deg";
-        }
-    }
-
-    public void PressDecreaseIncAngle()
-    {
-        incongruencyAngleDegree -= 1f;
-        if (incongruencyAngleDegree >= 0)
-        {
-            incongruencyTxt.text = "+" + incongruencyAngleDegree.ToString() + " deg";
-        }
-        else
-        {
-            incongruencyTxt.text = incongruencyAngleDegree.ToString() + " deg";
-        }
-    }
-
-    public void PressIncreaseNbTrials()
-    {
-        nbOfTrials += 1;
-        nbOfTrialsTxt.text = nbOfTrials.ToString();
-        taskLogic.SetNbTrials(nbOfTrials);
-    }
-
-    public void PressDecreaseNbTrials()
-    {
-        if (nbOfTrials > 1)
-        {
-            nbOfTrials -= 1;
-            nbOfTrialsTxt.text = nbOfTrials.ToString();
-            taskLogic.SetNbTrials(nbOfTrials);
-        }
     }
 }

@@ -9,8 +9,6 @@ public class IncongruencyController : MonoBehaviour
     [SerializeField] private InputActionReference incongruencyInput;
     [SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigMale;
     [SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigFemale;
-    [SerializeField] private TextMeshProUGUI angleTxt;
-    [SerializeField] private TextMeshProUGUI incongruencyTxt;
     [SerializeField] private GameObject elbowSphere;
     [SerializeField] private GameObject elbowSpherePoint2;
     [SerializeField] private GameObject rightHand;
@@ -61,10 +59,6 @@ public class IncongruencyController : MonoBehaviour
         float incongruencyZDiff = incongruencyZ - realZ;
         IKTargetFollowVRRigMale.rightHand.trackingPositionOffset = new Vector3(incongruencyXDiff, -incongruencyZDiff, 0);
         IKTargetFollowVRRigFemale.rightHand.trackingPositionOffset = new Vector3(incongruencyXDiff, -incongruencyZDiff, 0);
-
-        // update incugruency text in degrees
-        angleTxt.text = "Angle: " + angle.ToString("F2");
-        incongruencyTxt.text = "Incongruency: " + diffAngleDegree.ToString("F2");
     }
 
     private void Awake()
@@ -79,6 +73,7 @@ public class IncongruencyController : MonoBehaviour
 
     private void ApplyIncongruency(InputAction.CallbackContext context)
     {
+        /*
         Vector2 val = context.action.ReadValue<Vector2>();
         float x = val.x;
         if (x > 0)
@@ -89,6 +84,7 @@ public class IncongruencyController : MonoBehaviour
         {
             MakeAngleSmaller();
         }
+        */
     }
 
     private void MakeAngleSmaller()
@@ -114,6 +110,11 @@ public class IncongruencyController : MonoBehaviour
     public float GetIncongruencyAngle()
     {
         return diffAngleDegree + actualAngle;    
+    }
+
+    public float GetDiffAngle()
+    {
+        return diffAngleDegree;
     }
 
 }

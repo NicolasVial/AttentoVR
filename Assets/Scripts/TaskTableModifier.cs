@@ -64,6 +64,7 @@ public class TaskTableModifier : MonoBehaviour
                 MoveDown();
             }
         }
+        
     }
 
     private void MoveRight()
