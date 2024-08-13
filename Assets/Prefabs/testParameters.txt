@@ -1,4 +1,4 @@
-SeeArm (true/false | see only glass if false), first angle incongruency (in centimenter | Don't use "," but "."), second angle incongruency
+SeeArm (true/false | see only glass if false), first angle incongruency (in degree | Don't use "," but "."), second angle incongruency
 true, 5, 2.5
 false, 2.5, 0
 true, 0, 0
