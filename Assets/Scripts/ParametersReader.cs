@@ -24,6 +24,7 @@ public class ParametersReader : MonoBehaviour
 
     public List<List<string>> ReadParameters()
     {
+        parameters.Clear();
         StreamReader reader = new StreamReader(new MemoryStream(file.bytes));
         string line;
         int counter = 0;
