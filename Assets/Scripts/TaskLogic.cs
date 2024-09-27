@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class TaskLogic : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class TaskLogic : MonoBehaviour
     [SerializeField] private MenuManager menuManager;
     [SerializeField] private GameObject rightHand;
     [SerializeField] private ParametersReader parametersReader;
+    [SerializeField] private GameObject grayPanel;
+    [SerializeField] private Image blurImg;
 
     private int nbTrials = 1;
     private bool taskStarted = false;
@@ -22,6 +25,7 @@ public class TaskLogic : MonoBehaviour
     private int trialCounter = 1;
     private float firstAngle = 0f;
     private float secondAngle = 0f;
+    private float blurValue = 0f;
     private bool pauseRec = false;
     private Vector3 previousPos;
     private float firstAngleIncongruency = 0f;
@@ -55,7 +59,7 @@ public class TaskLogic : MonoBehaviour
             if(triggerCounter == 2)
             {
                 firstAngle = previousAngle - incongruencyController.GetAngle();
-                incongruencyController.SetIncongruencyAngle(secondAngleIncongruency);
+                StartCoroutine(SecondIncongrencyChange());
             }
             if(triggerCounter == 3)
             {
@@ -90,6 +94,8 @@ public class TaskLogic : MonoBehaviour
             taskLogger.WriteToFile("Task finished.");
             taskLogger.CloseFile();
             menuManager.ResetMenu();
+            blurValue = 0f;
+            blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
         }
 
         if(triggerCounter == 4)
@@ -98,6 +104,24 @@ public class TaskLogic : MonoBehaviour
             triggerCounter = 0;
             SetupTrial();
         }
+    }
+
+    private IEnumerator FirstIncongrencyChange()
+    {
+        grayPanel.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        incongruencyController.SetIncongruencyAngle(firstAngleIncongruency);
+        yield return new WaitForSeconds(0.5f);
+        grayPanel.SetActive(false);
+    }
+
+    private IEnumerator SecondIncongrencyChange()
+    {
+        grayPanel.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        incongruencyController.SetIncongruencyAngle(secondAngleIncongruency);
+        yield return new WaitForSeconds(0.5f);
+        grayPanel.SetActive(false);
     }
 
     public void StartTask()
@@ -128,8 +152,9 @@ public class TaskLogic : MonoBehaviour
         {
             menuManager.HideAvatars();
         }
+        blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
         taskLogger.WriteToFile("Starting trial " + trialCounter.ToString() + "...");
-        incongruencyController.SetIncongruencyAngle(firstAngleIncongruency);
+        StartCoroutine(FirstIncongrencyChange());
     }
 
     private void SetParameters(int trialNb)
@@ -137,6 +162,7 @@ public class TaskLogic : MonoBehaviour
         seeArm = bool.Parse(parameters[trialCounter - 1][0]);
         firstAngleIncongruency = float.Parse(parameters[trialCounter - 1][1]);
         secondAngleIncongruency = float.Parse(parameters[trialCounter - 1][2]);
+        blurValue = float.Parse(parameters[trialCounter - 1][3]);
     }
 
     public IEnumerator StartLogging()

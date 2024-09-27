@@ -1646,6 +1646,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "incongrR",
+                    "type": "Value",
+                    "id": "87495864-f9ff-4792-b02c-1736bd8ac1ed",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -1822,6 +1831,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "TaskTableMove",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f728856c-1986-462b-8f42-cdb19b5c25a5",
+                    "path": "<XRController>{RightHand}/primary2DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "incongrR",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -20,6 +20,7 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField] private TaskLogic taskLogic;
     [SerializeField] private TaskLogger taskLogger;
+    [SerializeField] private GameObject blackLine;
 
     private AvatarGender avatarGender;
 
@@ -54,6 +55,7 @@ public class MenuManager : MonoBehaviour
         femaleAvatar.SetActive(false);
         maleBody.SetActive(true);
         femaleBody.SetActive(true);
+        blackLine.SetActive(true);
     }
 
     public void ResetMenu()
@@ -114,6 +116,7 @@ public class MenuManager : MonoBehaviour
 
     public void PressStartTaskButton()
     {
+        blackLine.SetActive(false);
         taskLogger.StartTaskLogging();
         StartTaskPanel.SetActive(false);
         TaskPanel.SetActive(true);
