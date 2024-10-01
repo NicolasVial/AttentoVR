@@ -21,8 +21,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private TaskLogic taskLogic;
     [SerializeField] private TaskLogger taskLogger;
     [SerializeField] private GameObject blackLine;
+    [SerializeField] private GameObject armLinePanel;
 
-    private AvatarGender avatarGender;
+    public AvatarGender avatarGender;
 
     public enum AvatarGender
     {
@@ -56,6 +57,7 @@ public class MenuManager : MonoBehaviour
         maleBody.SetActive(true);
         femaleBody.SetActive(true);
         blackLine.SetActive(true);
+        armLinePanel.SetActive(false);
     }
 
     public void ResetMenu()
@@ -105,12 +107,14 @@ public class MenuManager : MonoBehaviour
     {
         femaleBody.SetActive(true);
         maleBody.SetActive(true);
+        armLinePanel.SetActive(false);
     }
 
     public void HideAvatars()
     {
         femaleBody.SetActive(false);
         maleBody.SetActive(false);
+        armLinePanel.SetActive(true);
     }
 
 
