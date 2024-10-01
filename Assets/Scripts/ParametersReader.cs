@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +23,29 @@ public class ParametersReader : MonoBehaviour
         
     }
 
+    /*
+     * Parameters:
+     * 0: subj NOT USED
+     * 1: mod NOT USED
+     * 2: co USED
+     * 3: standard NOT USED
+     * 4: stim NOT USED
+     * 5: block NOT USED
+     * 6: mod2 NOT USED
+     * 7: stim_letter NOT USED
+     * 8: standard_letter NOT USED
+     * 9: ord.st USED
+     * 10: trial USED
+     * 11: stim1 USED  
+     * 12: stim2 USED
+     * 13: stim1_let NOT USED
+     * 14: stim2_let NOT USED
+     * 15: incongruency USED
+     * 16: visual_real_standard NOT USED
+     * 17: blur USED
+     * 18: resp USED
+     * */
+
     public List<List<string>> ReadParameters()
     {
         parameters.Clear();
@@ -45,6 +69,16 @@ public class ParametersReader : MonoBehaviour
         reader.Close();
         return parameters;
     }
+
+    public string GetFirstLine()
+    {
+        StreamReader reader = new StreamReader(new MemoryStream(file.bytes));
+        string line = reader.ReadLine();
+        reader.Close();
+        return line;
+    }
+
+
 
 
 }

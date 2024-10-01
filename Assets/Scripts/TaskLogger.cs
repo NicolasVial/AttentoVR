@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TaskLogger : MonoBehaviour
 {
+    [SerializeField] private string fileName;
     private StreamWriter writer;
 
     // Start is called before the first frame update
@@ -28,7 +29,7 @@ public class TaskLogger : MonoBehaviour
 
     public void StartTaskLogging()
     {
-        writer = new StreamWriter(Application.persistentDataPath + "/AttentoVR_logs/" + "TaskLog_" + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt", true);
+        writer = new StreamWriter(Application.persistentDataPath + "/AttentoVR_logs/" + fileName + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt", true);
         writer.AutoFlush = true;
         writer.WriteLine("Date et heure: " + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
     }

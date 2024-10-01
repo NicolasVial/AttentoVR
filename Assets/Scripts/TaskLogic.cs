@@ -9,6 +9,7 @@ public class TaskLogic : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI trialNbTxt;
     [SerializeField] private TaskLogger taskLogger;
+    [SerializeField] private TaskLogger handPosLogger;
     [SerializeField] private InputActionReference leftHandTrigger;
     [SerializeField] private IncongruencyController incongruencyController;
     [SerializeField] private MenuManager menuManager;
@@ -44,6 +45,7 @@ public class TaskLogic : MonoBehaviour
         
     }
 
+
     // Update is called once per frame
     void Update()
     {
@@ -69,12 +71,9 @@ public class TaskLogic : MonoBehaviour
             {
                 pauseRec = true;
                 secondAngle = previousAngle - incongruencyController.GetAngle();
-                taskLogger.WriteToFile("-------------------------------------------------------------");
-                taskLogger.WriteToFile("First angle = " + firstAngle + ". With incongruency = " + firstAngleIncongruency + ".");
-                taskLogger.WriteToFile("Second angle = " + secondAngle + ". With incongruency = " + secondAngleIncongruency + ".");
-                taskLogger.WriteToFile("Finished trial " + trialCounter + ".");
-                taskLogger.WriteToFile("-------------------------------------------------------------");
-                trialCounter++;
+                menuManager.ShowChooseAngle();
+                blurValue = 0f;
+                blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
             }
 
             triggerPressed = false;
@@ -91,18 +90,23 @@ public class TaskLogic : MonoBehaviour
             secondAngle = 0f;
             triggerCounter = 0;
             pauseRec = false;
-            taskLogger.WriteToFile("Task finished.");
             taskLogger.CloseFile();
+            handPosLogger.CloseFile();
             menuManager.ResetMenu();
             blurValue = 0f;
             blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
         }
 
-        if(triggerCounter == 4)
+        if(triggerCounter == 5)
         {
-            pauseRec = false;
+            trialCounter++;
+            triggerPressed = false;
             triggerCounter = 0;
-            SetupTrial();
+            if(trialCounter <= nbTrials)
+            {
+                pauseRec = false;
+                SetupTrial();
+            }
         }
     }
 
@@ -131,8 +135,7 @@ public class TaskLogic : MonoBehaviour
         trialCounter = 1;
         SetParameters(trialCounter);
         
-        taskLogger.WriteToFile("Number of trials: " + nbTrials.ToString());
-        taskLogger.WriteToFile("-------------------------------------------------------------");
+        taskLogger.WriteToFile(parametersReader.GetFirstLine());
         
         
         SetupTrial();
@@ -153,37 +156,104 @@ public class TaskLogic : MonoBehaviour
             menuManager.HideAvatars();
         }
         blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
-        taskLogger.WriteToFile("Starting trial " + trialCounter.ToString() + "...");
         StartCoroutine(FirstIncongrencyChange());
     }
 
+    /*
+     * Parameters:
+     * 0: subj NOT USED
+     * 1: mod NOT USED
+     * 2: co USED
+     * 3: standard NOT USED
+     * 4: stim NOT USED
+     * 5: block NOT USED
+     * 6: mod2 NOT USED
+     * 7: stim_letter NOT USED
+     * 8: standard_letter NOT USED
+     * 9: ord.st USED
+     * 10: trial USED
+     * 11: stim1 USED  
+     * 12: stim2 USED
+     * 13: stim1_let NOT USED
+     * 14: stim2_let NOT USED
+     * 15: incongruency USED
+     * 16: visual_real_standard NOT USED
+     * 17: blur USED
+     * 18: resp USED
+     * */
+
     private void SetParameters(int trialNb)
     {
-        seeArm = bool.Parse(parameters[trialCounter - 1][0]);
-        firstAngleIncongruency = float.Parse(parameters[trialCounter - 1][1]);
-        secondAngleIncongruency = float.Parse(parameters[trialCounter - 1][2]);
-        blurValue = float.Parse(parameters[trialCounter - 1][3]);
+        if(parameters[trialCounter - 1][2] == "\"internal\"")
+        {
+            seeArm = true;
+        }
+        else
+        {
+            seeArm = false;
+        }
+
+        if(parameters[trialCounter - 1][9] == "1")
+        {
+            firstAngleIncongruency = float.Parse(parameters[trialCounter - 1][15]);
+            secondAngleIncongruency = 0f;
+        }
+        else
+        {
+            firstAngleIncongruency = 0f;
+            secondAngleIncongruency = float.Parse(parameters[trialCounter - 1][15]);
+        }
+
+        blurValue = float.Parse(parameters[trialCounter - 1][17]);
+    }
+
+    private void WriteTrialData(int answerAngleLarger)
+    {
+        string line = parameters[trialCounter - 1][0] + ",";
+        line += parameters[trialCounter - 1][1] + ",";
+        line += parameters[trialCounter - 1][2] + ",";
+        line += parameters[trialCounter - 1][3] + ",";
+        line += parameters[trialCounter - 1][4] + ",";
+        line += parameters[trialCounter - 1][5] + ",";
+        line += parameters[trialCounter - 1][6] + ",";
+        line += parameters[trialCounter - 1][7] + ",";
+        line += parameters[trialCounter - 1][8] + ",";
+        line += parameters[trialCounter - 1][9] + ",";
+        line += parameters[trialCounter - 1][10] + ",";
+        line += parameters[trialCounter - 1][11] + ",";
+        line += parameters[trialCounter - 1][12] + ",";
+        line += parameters[trialCounter - 1][13] + ",";
+        line += parameters[trialCounter - 1][14] + ",";
+        line += parameters[trialCounter - 1][15] + ",";
+        line += parameters[trialCounter - 1][16] + ",";
+        line += parameters[trialCounter - 1][17] + ",";
+        line += answerAngleLarger.ToString();
+        taskLogger.WriteToFile(line);
     }
 
     public IEnumerator StartLogging()
     {
         bool firstTime = true;
-        float keepTime = 0;
         while(!isTaskFinished)
         {
             if(!pauseRec)
             {
-                float velocity = (rightHand.transform.position - previousPos).magnitude / (Time.time - keepTime);
-                keepTime = Time.time;
-                if (firstTime)
+                if(firstTime)
                 {
-                    velocity = 0;
+                    handPosLogger.StartTaskLogging();
+                    handPosLogger.WriteToFile("\"trial Nb\",\"x pos\",\"y pos\",\"z pos\"");
                     firstTime = false;
                 }
-                taskLogger.WriteToFile("real Angle: " + incongruencyController.GetAngle() + " || " + "Angle with incongruency: " + incongruencyController.GetIncongruencyAngle() + " || " + "Velocity: " + velocity);
-                previousPos = rightHand.transform.position;
-                yield return new WaitForSeconds(0.025f);
+                else
+                {
+                    string line = trialCounter.ToString() + ",";
+                    line += rightHand.transform.position.x.ToString() + ",";
+                    line += rightHand.transform.position.y.ToString() + ",";
+                    line += rightHand.transform.position.z.ToString();
+                    handPosLogger.WriteToFile(line);
+                }
             }
+            yield return new WaitForSeconds(0.025f);
         }
         isTaskFinished = false;
         yield return null;
@@ -201,11 +271,30 @@ public class TaskLogic : MonoBehaviour
 
     private void PressLeftHandTrigger(InputAction.CallbackContext context)
     {
-        if (taskStarted)
+        if (taskStarted && triggerCounter!=4)
         {
-            taskLogger.WriteToFile("Trigger pressed to record an angle.");
             triggerPressed = true;
             triggerCounter++;
+        }
+    }
+
+    public void PressFirstAngleBigger()
+    {
+        if (taskStarted)
+        {
+            triggerCounter++;
+            WriteTrialData(1);
+            menuManager.HideChooseAngle();
+        }
+    }
+
+    public void PressSecondAngleBigger()
+    {
+        if (taskStarted)
+        {
+            triggerCounter++;
+            WriteTrialData(2);
+            menuManager.HideChooseAngle();
         }
     }
         

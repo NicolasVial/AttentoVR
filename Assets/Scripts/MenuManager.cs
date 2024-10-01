@@ -17,6 +17,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject avatarSelectionPanel;
     [SerializeField] private GameObject StartTaskPanel;
     [SerializeField] private GameObject TaskPanel;
+    [SerializeField] private GameObject chooseBiggerAnglePanel;
 
     [SerializeField] private TaskLogic taskLogic;
     [SerializeField] private TaskLogger taskLogger;
@@ -50,6 +51,7 @@ public class MenuManager : MonoBehaviour
         avatarSelectionPanel.SetActive(true);
         StartTaskPanel.SetActive(false);
         TaskPanel.SetActive(false);
+        chooseBiggerAnglePanel.SetActive(false);
         rightHand.enabled = false;
         leftHand.enabled = true;
         maleAvatar.SetActive(false);
@@ -127,5 +129,14 @@ public class MenuManager : MonoBehaviour
         rightHand.enabled = false;
         leftHand.enabled = false;
         taskLogic.StartTask();
+    }
+
+    public void ShowChooseAngle()
+    {
+        chooseBiggerAnglePanel.SetActive(true);
+    }
+
+    public void HideChooseAngle() {
+        chooseBiggerAnglePanel.SetActive(false);
     }
 }
