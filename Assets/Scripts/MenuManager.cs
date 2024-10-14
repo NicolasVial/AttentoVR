@@ -23,8 +23,11 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private TaskLogger taskLogger;
     [SerializeField] private GameObject blackLine;
     [SerializeField] private GameObject armLinePanel;
+    [SerializeField] private GameObject handOnlyGO;
+    [SerializeField] private handOnlyScript handOnlyScript;
 
     public AvatarGender avatarGender;
+    
 
     public enum AvatarGender
     {
@@ -60,6 +63,7 @@ public class MenuManager : MonoBehaviour
         femaleBody.SetActive(true);
         blackLine.SetActive(true);
         armLinePanel.SetActive(false);
+        handOnlyGO.SetActive(false);
     }
 
     public void ResetMenu()
@@ -69,6 +73,7 @@ public class MenuManager : MonoBehaviour
 
     public void PressMaleAvatarButton()
     {
+        this.handOnlyScript.isMaleAvatar = true;
         avatarSelectionPanel.SetActive(false);
         StartTaskPanel.SetActive(true);
         avatarGender = AvatarGender.Male;
@@ -88,6 +93,7 @@ public class MenuManager : MonoBehaviour
 
     public void PressFemaleAvatarButton()
     {
+        this.handOnlyScript.isMaleAvatar = false;
         avatarSelectionPanel.SetActive(false);
         StartTaskPanel.SetActive(true);
         avatarGender = AvatarGender.Female;
@@ -109,14 +115,33 @@ public class MenuManager : MonoBehaviour
     {
         femaleBody.SetActive(true);
         maleBody.SetActive(true);
-        armLinePanel.SetActive(false);
+        HideArmLinePanel();
     }
 
     public void HideAvatars()
     {
         femaleBody.SetActive(false);
         maleBody.SetActive(false);
+    }
+
+    public void ShowArmLinePanel()
+    {
         armLinePanel.SetActive(true);
+    }
+
+    public void HideArmLinePanel()
+    {
+        armLinePanel.SetActive(false);
+    }
+
+    public void ShowHandOnlyGO()
+    {
+        handOnlyGO.SetActive(true);
+    }
+
+    public void HideHandOnlyGO()
+    {
+        handOnlyGO.SetActive(false);
     }
 
 

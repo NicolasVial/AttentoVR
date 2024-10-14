@@ -10,7 +10,6 @@ public class TaskLogic : MonoBehaviour
     [SerializeField] private TextMeshProUGUI trialNbTxt;
     [SerializeField] private TaskLogger taskLogger;
     [SerializeField] private TaskLogger handPosLogger;
-    [SerializeField] private InputActionReference leftHandTrigger;
     [SerializeField] private IncongruencyController incongruencyController;
     [SerializeField] private MenuManager menuManager;
     [SerializeField] private GameObject rightHand;
@@ -31,6 +30,7 @@ public class TaskLogic : MonoBehaviour
     private Vector3 previousPos;
     private float firstAngleIncongruency = 0f;
     private float secondAngleIncongruency = 0f;
+    private bool isInternal = true;
     private bool seeArm = true;
     private List<List<string>> parameters = new List<List<string>>();
     private float previousAngle = 0f;
@@ -38,6 +38,8 @@ public class TaskLogic : MonoBehaviour
     [Header("Real time angle values.")]
     public float actualAngle;
     public float actualIncongruencyAngle;
+
+    private bool waitForAnswer = false;
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +51,23 @@ public class TaskLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space)){
+            if (taskStarted && triggerCounter != 4)
+            {
+                triggerPressed = true;
+                triggerCounter++;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            PressFirstAngleBigger();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            PressSecondAngleBigger();
+        }
+        
+
         actualAngle = incongruencyController.GetAngle();
         actualIncongruencyAngle = incongruencyController.GetDiffAngle();
 
@@ -74,6 +93,7 @@ public class TaskLogic : MonoBehaviour
                 menuManager.ShowChooseAngle();
                 blurValue = 0f;
                 blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
+                waitForAnswer = true;
             }
 
             triggerPressed = false;
@@ -147,13 +167,36 @@ public class TaskLogic : MonoBehaviour
     {
         trialNbTxt.text = trialCounter.ToString() + "/" + nbTrials.ToString();
         SetParameters(trialCounter);
-        if (seeArm)
+        if (isInternal)
         {
-            menuManager.ShowAvatars();
+            if (seeArm)
+            {
+                menuManager.ShowAvatars();
+                menuManager.HideHandOnlyGO();
+                menuManager.HideArmLinePanel();
+            }
+            else
+            {
+                menuManager.HideAvatars();
+                menuManager.ShowHandOnlyGO();
+                menuManager.HideArmLinePanel();
+            }
+            
         }
         else
         {
-            menuManager.HideAvatars();
+            if (seeArm)
+            {
+                menuManager.HideAvatars();
+                menuManager.HideHandOnlyGO();
+                menuManager.ShowArmLinePanel();
+            }
+            else
+            {
+                menuManager.HideAvatars();
+                menuManager.HideHandOnlyGO();
+                menuManager.HideArmLinePanel();
+            }
         }
         blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
         StartCoroutine(FirstIncongrencyChange());
@@ -179,18 +222,19 @@ public class TaskLogic : MonoBehaviour
      * 15: incongruency USED
      * 16: visual_real_standard NOT USED
      * 17: blur USED
-     * 18: resp USED
+     * 18: arm USED
+     * 19: resp USED
      * */
 
     private void SetParameters(int trialNb)
     {
         if(parameters[trialCounter - 1][2] == "\"internal\"")
         {
-            seeArm = true;
+            isInternal = true;
         }
         else
         {
-            seeArm = false;
+            isInternal = false;
         }
 
         if(parameters[trialCounter - 1][9] == "1")
@@ -205,6 +249,7 @@ public class TaskLogic : MonoBehaviour
         }
 
         blurValue = float.Parse(parameters[trialCounter - 1][17]);
+        seeArm = int.Parse(parameters[trialCounter - 1][18]) == 1 ? true : false;
     }
 
     private void WriteTrialData(int answerAngleLarger)
@@ -227,6 +272,7 @@ public class TaskLogic : MonoBehaviour
         line += parameters[trialCounter - 1][15] + ",";
         line += parameters[trialCounter - 1][16] + ",";
         line += parameters[trialCounter - 1][17] + ",";
+        line += parameters[trialCounter - 1][18] + ",";
         line += answerAngleLarger.ToString();
         taskLogger.WriteToFile(line);
     }
@@ -259,16 +305,6 @@ public class TaskLogic : MonoBehaviour
         yield return null;
     }
 
-    private void Awake()
-    {
-        leftHandTrigger.action.performed += PressLeftHandTrigger;
-    }
-
-    private void OnDestroy()
-    {
-        leftHandTrigger.action.performed -= PressLeftHandTrigger;
-    }
-
     private void PressLeftHandTrigger(InputAction.CallbackContext context)
     {
         if (taskStarted && triggerCounter!=4)
@@ -280,21 +316,23 @@ public class TaskLogic : MonoBehaviour
 
     public void PressFirstAngleBigger()
     {
-        if (taskStarted)
+        if (taskStarted && waitForAnswer)
         {
             triggerCounter++;
             WriteTrialData(1);
             menuManager.HideChooseAngle();
+            waitForAnswer = false;
         }
     }
 
     public void PressSecondAngleBigger()
     {
-        if (taskStarted)
+        if (taskStarted && waitForAnswer)
         {
             triggerCounter++;
             WriteTrialData(2);
             menuManager.HideChooseAngle();
+            waitForAnswer = false;
         }
     }
         

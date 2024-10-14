@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 
 public class TaskTableModifier : MonoBehaviour
 {
-    [SerializeField] private InputActionReference taskTableMoveInput;
 
     [SerializeField] private Transform[] transforms;
 
@@ -25,46 +24,23 @@ public class TaskTableModifier : MonoBehaviour
     {
         rightArmHintGOFemale.transform.position = elbowSphere.transform.position;
         rightArmHintGOMale.transform.position = elbowSphere.transform.position;
-    }
 
-    private void Awake()
-    {
-        taskTableMoveInput.action.performed += TaskTableMove;
-    }
-
-    private void OnDestroy()
-    {
-        taskTableMoveInput.action.performed -= TaskTableMove;
-    }
-
-    private void TaskTableMove(InputAction.CallbackContext context)
-    {
-        Vector2 val = context.action.ReadValue<Vector2>();
-        float x = val.x;
-        float y = val.y;
-        if(Mathf.Abs(x) > Mathf.Abs(y))
+        if(Input.GetKey(KeyCode.RightArrow))
         {
-            if(x > 0)
-            {
-                MoveRight();
-            }
-            else
-            {
-                MoveLeft();
-            }
+            MoveRight();
         }
-        else
+        if(Input.GetKey(KeyCode.LeftArrow))
         {
-            if(y > 0)
-            {
-                MoveUp();
-            }
-            else
-            {
-                MoveDown();
-            }
+            MoveLeft();
         }
-        
+        if(Input.GetKey(KeyCode.UpArrow))
+        {
+            MoveUp();
+        }
+        if(Input.GetKey(KeyCode.DownArrow))
+        {
+            MoveDown();
+        }
     }
 
     private void MoveRight()
