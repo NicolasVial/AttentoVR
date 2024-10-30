@@ -3,67 +3,73 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
 
-    [SerializeField] private GameObject maleAvatar;
-    [SerializeField] private GameObject femaleAvatar;
     [SerializeField] private LineRenderer rightHand;
     [SerializeField] private LineRenderer leftHand;
-    [SerializeField] private GameObject maleBody;
-    [SerializeField] private GameObject femaleBody;
+    [SerializeField] private GameObject body;
 
-    [SerializeField] private GameObject avatarSelectionPanel;
     [SerializeField] private GameObject StartTaskPanel;
     [SerializeField] private GameObject TaskPanel;
     [SerializeField] private GameObject chooseBiggerAnglePanel;
 
     [SerializeField] private TaskLogic taskLogic;
     [SerializeField] private TaskLogger taskLogger;
-    [SerializeField] private GameObject blackLine;
-    [SerializeField] private GameObject armLinePanel;
+    [SerializeField] private IncongruencyController incongruencyController;
+    [SerializeField] private GameObject[] blackLines;
+    [SerializeField] private GameObject fakeArmGO;
     [SerializeField] private GameObject handOnlyGO;
-    [SerializeField] private handOnlyScript handOnlyScript;
+    [SerializeField] private GameObject armVisualGO;
 
-    public AvatarGender avatarGender;
-    
+    [SerializeField] private TextMeshProUGUI actualAngleTxt;
+    [SerializeField] private TextMeshProUGUI incongruencyAngleTxt;
+    [SerializeField] private TextMeshProUGUI trialNbTxt;
+    [SerializeField] private TextMeshProUGUI modTxt;
+    [SerializeField] private TextMeshProUGUI stimulus1Txt;
+    [SerializeField] private TextMeshProUGUI stimulus2Txt;
+    [SerializeField] private TextMeshProUGUI conditionTxt;
+    [SerializeField] private TextMeshProUGUI ordSt;
 
-    public enum AvatarGender
-    {
-        Male,
-        Female,
-    }
+    [SerializeField] private Image firstClickImg;
+    [SerializeField] private Image secondClickImg;
+    [SerializeField] private Image thirdClickImg;
+    [SerializeField] private Image fourthClickImg;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        femaleAvatar.SetActive(false);
-        maleAvatar.SetActive(false);
         InitPanels();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        // update actual angle text, with only 1 decimal
+        actualAngleTxt.text = "Arm angle: " + incongruencyController.GetAngle().ToString("F1") + "°";
+        // update incongruency angle text, with only 1 decimal
+        incongruencyAngleTxt.text = "Incongruency angle: " + incongruencyController.GetDiffAngle().ToString("F1") + "°";
     }
 
     private void InitPanels()
     {
-        avatarSelectionPanel.SetActive(true);
-        StartTaskPanel.SetActive(false);
+        StartTaskPanel.SetActive(true);
         TaskPanel.SetActive(false);
         chooseBiggerAnglePanel.SetActive(false);
         rightHand.enabled = false;
         leftHand.enabled = true;
-        maleAvatar.SetActive(false);
-        femaleAvatar.SetActive(false);
-        maleBody.SetActive(true);
-        femaleBody.SetActive(true);
-        blackLine.SetActive(true);
-        armLinePanel.SetActive(false);
+        body.SetActive(true);
+        for(int i = 0; i < blackLines.Length; i++)
+        {
+            blackLines[i].SetActive(true);
+        }
+        fakeArmGO.SetActive(false);
         handOnlyGO.SetActive(false);
+        armVisualGO.SetActive(true);
+        ResetclickColors();
     }
 
     public void ResetMenu()
@@ -71,67 +77,27 @@ public class MenuManager : MonoBehaviour
         InitPanels();
     }
 
-    public void PressMaleAvatarButton()
+    public void ShowBody()
     {
-        this.handOnlyScript.isMaleAvatar = true;
-        avatarSelectionPanel.SetActive(false);
-        StartTaskPanel.SetActive(true);
-        avatarGender = AvatarGender.Male;
-        femaleBody.SetActive(true);
-        maleBody.SetActive(true);
-        if (avatarGender == AvatarGender.Male)
-        {
-            maleAvatar.SetActive(true);
-            femaleAvatar.SetActive(false);
-        }
-        else
-        {
-            femaleAvatar.SetActive(true);
-            maleAvatar.SetActive(false);
-        }
+        armVisualGO.SetActive(true);
+        body.SetActive(true);
+        HideFakeArm();
     }
 
-    public void PressFemaleAvatarButton()
+    public void HideBody()
     {
-        this.handOnlyScript.isMaleAvatar = false;
-        avatarSelectionPanel.SetActive(false);
-        StartTaskPanel.SetActive(true);
-        avatarGender = AvatarGender.Female;
-        femaleBody.SetActive(true);
-        maleBody.SetActive(true);
-        if (avatarGender == AvatarGender.Male)
-        {
-            maleAvatar.SetActive(true);
-            femaleAvatar.SetActive(false);
-        }
-        else
-        {
-            femaleAvatar.SetActive(true);
-            maleAvatar.SetActive(false);
-        }
+        body.SetActive(false);
     }
 
-    public void ShowAvatars()
+    public void ShowFakeArm()
     {
-        femaleBody.SetActive(true);
-        maleBody.SetActive(true);
-        HideArmLinePanel();
+        fakeArmGO.SetActive(true);
+        HideBody();
     }
 
-    public void HideAvatars()
+    public void HideFakeArm()
     {
-        femaleBody.SetActive(false);
-        maleBody.SetActive(false);
-    }
-
-    public void ShowArmLinePanel()
-    {
-        armLinePanel.SetActive(true);
-    }
-
-    public void HideArmLinePanel()
-    {
-        armLinePanel.SetActive(false);
+        fakeArmGO.SetActive(false);
     }
 
     public void ShowHandOnlyGO()
@@ -144,10 +110,19 @@ public class MenuManager : MonoBehaviour
         handOnlyGO.SetActive(false);
     }
 
+    public void ShowGlassOnly()
+    {
+        ShowBody();
+        armVisualGO.SetActive(false);
+    }
+
 
     public void PressStartTaskButton()
     {
-        blackLine.SetActive(false);
+        for (int i = 0; i < blackLines.Length; i++)
+        {
+            blackLines[i].SetActive(false);
+        }
         taskLogger.StartTaskLogging();
         StartTaskPanel.SetActive(false);
         TaskPanel.SetActive(true);
@@ -163,5 +138,64 @@ public class MenuManager : MonoBehaviour
 
     public void HideChooseAngle() {
         chooseBiggerAnglePanel.SetActive(false);
+    }
+
+    public void SetTrialNbTxt(string s)
+    {
+        trialNbTxt.text = s;
+    }
+
+    public void SetModTxt(string s)
+    {
+        modTxt.text = s;
+    }
+
+    public void SetStimulus1Txt(string s)
+    {
+        stimulus1Txt.text = s;
+    }
+
+    public void SetStimulus2Txt(string s)
+    {
+        stimulus2Txt.text = s;
+    }
+
+    public void SetConditionTxt(string s)
+    {
+        conditionTxt.text = s;
+    }
+
+    public void SetOrdStTxt(string s)
+    {
+        ordSt.text = s;
+    }
+
+    public void SetFirstClickImgColor(Color c)
+    {
+        firstClickImg.color = c;
+    }
+
+    public void SetSecondClickImgColor(Color c)
+    {
+        secondClickImg.color = c;
+    }
+
+    public void SetThirdClickImgColor(Color c)
+    {
+        thirdClickImg.color = c;
+    }
+
+    public void SetFourthClickImgColor(Color c)
+    {
+        fourthClickImg.color = c;
+    }
+
+    public void ResetclickColors()
+    {
+
+        SetFirstClickImgColor(Color.white);
+        SetSecondClickImgColor(Color.white);
+        SetThirdClickImgColor(Color.white);
+        SetFourthClickImgColor(Color.white);
     }
 }

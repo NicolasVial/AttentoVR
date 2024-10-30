@@ -7,11 +7,14 @@ using UnityEngine.InputSystem;
 public class IncongruencyController : MonoBehaviour
 {
     [SerializeField] private InputActionReference incongruencyInput;
-    [SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigMale;
-    [SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigFemale;
+    //[SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigMale;
+    //[SerializeField] private IKTargetFollowVRRig IKTargetFollowVRRigFemale;
     [SerializeField] private GameObject elbowSphere;
     [SerializeField] private GameObject elbowSpherePoint2;
     [SerializeField] private GameObject rightHand;
+    [SerializeField] private GameObject armPivot;
+    [SerializeField] private GameObject headset;
+    [SerializeField] private float offset;
 
     private float diffAngleDegree = 0f;
     private float angleReductionDegree = 1f;
@@ -26,6 +29,9 @@ public class IncongruencyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        elbowSphere.transform.position = new Vector3(elbowSphere.transform.position.x, elbowSphere.transform.position.y, headset.transform.position.z + offset);
+        elbowSpherePoint2.transform.position = new Vector3(elbowSpherePoint2.transform.position.x, elbowSpherePoint2.transform.position.y, headset.transform.position.z + offset);
  
         /*
          * Get the angle formed by the line formed by the elbowSphere and elbowSpherePoint2 and the line formed by the elbowSphere and the rightHandPos in the x,z plan.
@@ -43,11 +49,9 @@ public class IncongruencyController : MonoBehaviour
         angle = 180 - angle;
         actualAngle = angle;
 
-
         /*
-         * We now want to add an incongruency to the angle formed by the line formed by the elbowSphere and elbowSpherePoint2 and the line formed by the elbowSphere and the rightHandPos in the x,z plan. To apply the incongruency,
-         * we need to find the values for the variable IKTargetFollowVRRigMale.rightHand.trackingRotationOffset.y and IKTargetFollowVRRigFemale.rightHand.trackingPositionOffset.
-         */
+        //We now want to add an incongruency to the angle formed by the line formed by the elbowSphere and elbowSpherePoint2 and the line formed by the elbowSphere and the rightHandPos in the x,z plan. To apply the incongruency,
+        //we need to find the values for the variable IKTargetFollowVRRigMale.rightHand.trackingRotationOffset.y and IKTargetFollowVRRigFemale.rightHand.trackingPositionOffset.
         Vector2 elbowSphereToIKTarget = new Vector2(rightHand.transform.position.x - elbowSphere.transform.position.x, rightHand.transform.position.z - elbowSphere.transform.position.z);
         float realX = rightHand.transform.position.x - elbowSphere.transform.position.x;
         float realZ = rightHand.transform.position.z - elbowSphere.transform.position.z;
@@ -59,6 +63,11 @@ public class IncongruencyController : MonoBehaviour
         float incongruencyZDiff = incongruencyZ - realZ;
         IKTargetFollowVRRigMale.rightHand.trackingPositionOffset = new Vector3(incongruencyXDiff, -incongruencyZDiff, 0);
         IKTargetFollowVRRigFemale.rightHand.trackingPositionOffset = new Vector3(incongruencyXDiff, -incongruencyZDiff, 0);
+        */
+
+        float incongruencyAngle = diffAngleDegree + angle - 90f;
+        armPivot.transform.localEulerAngles = new Vector3(armPivot.transform.localEulerAngles.x, incongruencyAngle, armPivot.transform.localEulerAngles.z);
+
     }
 
     private void Awake()

@@ -75,19 +75,23 @@ public class TaskLogic : MonoBehaviour
         {
             if(triggerCounter == 1)
             {
+                menuManager.SetFirstClickImgColor(Color.green);
                 previousAngle = incongruencyController.GetAngle();
             }
             if(triggerCounter == 2)
             {
                 firstAngle = previousAngle - incongruencyController.GetAngle();
+                menuManager.SetSecondClickImgColor(Color.green);
                 StartCoroutine(SecondIncongrencyChange());
             }
             if(triggerCounter == 3)
             {
                 previousAngle = incongruencyController.GetAngle();
+                menuManager.SetThirdClickImgColor(Color.green);
             }
             if(triggerCounter == 4)
             {
+                menuManager.SetFourthClickImgColor(Color.green);
                 pauseRec = true;
                 secondAngle = previousAngle - incongruencyController.GetAngle();
                 menuManager.ShowChooseAngle();
@@ -166,20 +170,21 @@ public class TaskLogic : MonoBehaviour
     private void SetupTrial()
     {
         trialNbTxt.text = trialCounter.ToString() + "/" + nbTrials.ToString();
+        menuManager.SetTrialNbTxt("Trial " + trialCounter.ToString() + "/" + nbTrials.ToString());
         SetParameters(trialCounter);
         if (isInternal)
         {
             if (seeArm)
             {
-                menuManager.ShowAvatars();
+                menuManager.ShowBody();
                 menuManager.HideHandOnlyGO();
-                menuManager.HideArmLinePanel();
+                menuManager.HideFakeArm();
             }
             else
             {
-                menuManager.HideAvatars();
+                menuManager.HideBody();
                 menuManager.ShowHandOnlyGO();
-                menuManager.HideArmLinePanel();
+                menuManager.HideFakeArm();
             }
             
         }
@@ -187,15 +192,16 @@ public class TaskLogic : MonoBehaviour
         {
             if (seeArm)
             {
-                menuManager.HideAvatars();
+                menuManager.HideBody();
                 menuManager.HideHandOnlyGO();
-                menuManager.ShowArmLinePanel();
+                menuManager.ShowFakeArm();
             }
             else
             {
-                menuManager.HideAvatars();
+                menuManager.HideBody();
                 menuManager.HideHandOnlyGO();
-                menuManager.HideArmLinePanel();
+                menuManager.HideFakeArm();
+                menuManager.ShowGlassOnly();
             }
         }
         blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
@@ -228,7 +234,8 @@ public class TaskLogic : MonoBehaviour
 
     private void SetParameters(int trialNb)
     {
-        if(parameters[trialCounter - 1][2] == "\"internal\"")
+        menuManager.SetModTxt("Mod: " + parameters[trialCounter - 1][1]);
+        if(parameters[trialCounter - 1][2] == "internal")
         {
             isInternal = true;
         }
@@ -247,7 +254,10 @@ public class TaskLogic : MonoBehaviour
             firstAngleIncongruency = 0f;
             secondAngleIncongruency = float.Parse(parameters[trialCounter - 1][15]);
         }
-
+        menuManager.SetOrdStTxt("Ord St: " + parameters[trialCounter - 1][9]);  
+        menuManager.SetStimulus1Txt("Stimulus 1: " + parameters[trialCounter - 1][11]);
+        menuManager.SetStimulus2Txt("Stimulus 2: " + parameters[trialCounter - 1][12]);
+        menuManager.SetConditionTxt("Condition: " + parameters[trialCounter - 1][2]);
         blurValue = float.Parse(parameters[trialCounter - 1][17]);
         seeArm = int.Parse(parameters[trialCounter - 1][18]) == 1 ? true : false;
     }
@@ -287,7 +297,7 @@ public class TaskLogic : MonoBehaviour
                 if(firstTime)
                 {
                     handPosLogger.StartTaskLogging();
-                    handPosLogger.WriteToFile("\"trial Nb\",\"x pos\",\"y pos\",\"z pos\"");
+                    handPosLogger.WriteToFile("trial Nb,x pos,y pos,z pos");
                     firstTime = false;
                 }
                 else
@@ -322,6 +332,7 @@ public class TaskLogic : MonoBehaviour
             WriteTrialData(1);
             menuManager.HideChooseAngle();
             waitForAnswer = false;
+            menuManager.ResetclickColors();
         }
     }
 
@@ -331,6 +342,18 @@ public class TaskLogic : MonoBehaviour
         {
             triggerCounter++;
             WriteTrialData(2);
+            menuManager.HideChooseAngle();
+            waitForAnswer = false;
+            menuManager.ResetclickColors();
+        }
+    }
+
+    public void PressResetTrialButton()
+    {
+        if (taskStarted)
+        {
+            triggerCounter = 0;
+            menuManager.ResetclickColors();
             menuManager.HideChooseAngle();
             waitForAnswer = false;
         }
