@@ -15,6 +15,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject StartTaskPanel;
     [SerializeField] private GameObject TaskPanel;
     [SerializeField] private GameObject chooseBiggerAnglePanel;
+    [SerializeField] private GameObject ownershipPanel;
 
     [SerializeField] private TaskLogic taskLogic;
     [SerializeField] private TaskLogger taskLogger;
@@ -52,6 +53,11 @@ public class MenuManager : MonoBehaviour
         actualAngleTxt.text = "Arm angle: " + incongruencyController.GetAngle().ToString("F1") + "°";
         // update incongruency angle text, with only 1 decimal
         incongruencyAngleTxt.text = "Incongruency angle: " + incongruencyController.GetDiffAngle().ToString("F1") + "°";
+
+        if(StartTaskPanel.activeSelf && Input.GetKeyDown(KeyCode.Space))
+        {
+            PressStartTaskButton();
+        }
     }
 
     private void InitPanels()
@@ -60,7 +66,7 @@ public class MenuManager : MonoBehaviour
         TaskPanel.SetActive(false);
         chooseBiggerAnglePanel.SetActive(false);
         rightHand.enabled = false;
-        leftHand.enabled = true;
+        leftHand.enabled = false;
         body.SetActive(true);
         for(int i = 0; i < blackLines.Length; i++)
         {
@@ -70,6 +76,7 @@ public class MenuManager : MonoBehaviour
         handOnlyGO.SetActive(false);
         armVisualGO.SetActive(true);
         ResetclickColors();
+        HideOwnershipPanel();
     }
 
     public void ResetMenu()
@@ -197,5 +204,15 @@ public class MenuManager : MonoBehaviour
         SetSecondClickImgColor(Color.white);
         SetThirdClickImgColor(Color.white);
         SetFourthClickImgColor(Color.white);
+    }
+
+    public void ShowOwnershipPanel()
+    {
+        ownershipPanel.SetActive(true);
+    }
+
+    public void HideOwnershipPanel()
+    {
+        ownershipPanel.SetActive(false);
     }
 }

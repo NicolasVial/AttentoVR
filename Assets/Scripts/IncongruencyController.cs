@@ -82,7 +82,7 @@ public class IncongruencyController : MonoBehaviour
 
     private void ApplyIncongruency(InputAction.CallbackContext context)
     {
-        /*
+        
         Vector2 val = context.action.ReadValue<Vector2>();
         float x = val.x;
         if (x > 0)
@@ -93,7 +93,7 @@ public class IncongruencyController : MonoBehaviour
         {
             MakeAngleSmaller();
         }
-        */
+        
     }
 
     private void MakeAngleSmaller()

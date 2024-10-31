@@ -19,6 +19,7 @@ public class TaskTableModifier : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         if(Input.GetKey(KeyCode.RightArrow))
         {
             MoveRight();
@@ -27,11 +28,12 @@ public class TaskTableModifier : MonoBehaviour
         {
             MoveLeft();
         }
-        if(Input.GetKey(KeyCode.UpArrow))
+        */
+        if(Input.GetKey(KeyCode.Q))
         {
             MoveUp();
         }
-        if(Input.GetKey(KeyCode.DownArrow))
+        if(Input.GetKey(KeyCode.A))
         {
             MoveDown();
         }
