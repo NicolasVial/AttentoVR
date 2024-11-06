@@ -1,0 +1,6 @@
+"subj","mod","co","standard","stim","block","mod2","stim_letter","standard_letter","ord.st","trial","stim1","stim2","stim1_let","stim2_let","incongruency","visual_real_standard","blur","arm","resp"
+1,"visual","internal",30,22.5,1,"uni","16--23","5--13",1,8,"30","22.5","5--13","16--23",0,30,0,0,NA
+1,"visual","internal",30,22.5,1,"uni","16--23","5--13",1,8,"30","22.5","5--13","16--23",0,30,0,1,NA
+1,"visual","external",30,22.5,1,"uni","16--23","5--13",1,8,"30","22.5","5--13","16--23",0,30,0,0,NA
+1,"visual","external",30,22.5,1,"uni","16--23","5--13",1,8,"30","22.5","5--13","16--23",0,30,0,1,NA
+
