@@ -9,9 +9,6 @@ public class TaskTableModifier : MonoBehaviour
 
     [SerializeField] private Transform[] transforms;
 
-    [SerializeField] private GameObject rightArmHintGOFemale;
-    [SerializeField] private GameObject rightArmHintGOMale;
-    [SerializeField] private GameObject elbowSphere;
 
     // Start is called before the first frame update
     void Start()
@@ -22,9 +19,7 @@ public class TaskTableModifier : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rightArmHintGOFemale.transform.position = elbowSphere.transform.position;
-        rightArmHintGOMale.transform.position = elbowSphere.transform.position;
-
+        /*
         if(Input.GetKey(KeyCode.RightArrow))
         {
             MoveRight();
@@ -33,13 +28,22 @@ public class TaskTableModifier : MonoBehaviour
         {
             MoveLeft();
         }
-        if(Input.GetKey(KeyCode.UpArrow))
+        */
+        if(Input.GetKey(KeyCode.Q))
         {
             MoveUp();
         }
-        if(Input.GetKey(KeyCode.DownArrow))
+        if(Input.GetKey(KeyCode.A))
         {
             MoveDown();
+        }
+        if(Input.GetKey(KeyCode.W))
+        {
+            MoveForward();
+        }
+        if(Input.GetKey(KeyCode.S))
+        {
+            MoveBackward();
         }
     }
 
@@ -72,6 +76,22 @@ public class TaskTableModifier : MonoBehaviour
         foreach(Transform t in transforms)
         {
             t.position += new Vector3(0, -0.002f, 0);
+        }
+    }
+
+    private void MoveBackward()
+    {
+        foreach(Transform t in transforms)
+        {
+            t.position += new Vector3(0, 0, -0.002f);
+        }
+    }
+
+    private void MoveForward()
+    {
+        foreach(Transform t in transforms)
+        {
+            t.position += new Vector3(0, 0, 0.002f);
         }
     }
 
