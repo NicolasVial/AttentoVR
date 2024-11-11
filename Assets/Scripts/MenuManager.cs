@@ -11,6 +11,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private LineRenderer rightHand;
     [SerializeField] private LineRenderer leftHand;
     [SerializeField] private GameObject body;
+    [SerializeField] private GameObject glass;
 
     [SerializeField] private GameObject StartTaskPanel;
     [SerializeField] private GameObject TaskPanel;
@@ -110,6 +111,7 @@ public class MenuManager : MonoBehaviour
     public void ShowHandOnlyGO()
     {
         handOnlyGO.SetActive(true);
+        glass.SetActive(false);
     }
 
     public void HideHandOnlyGO()
@@ -121,6 +123,7 @@ public class MenuManager : MonoBehaviour
     {
         ShowBody();
         armVisualGO.SetActive(false);
+        glass.SetActive(true);
     }
 
 
