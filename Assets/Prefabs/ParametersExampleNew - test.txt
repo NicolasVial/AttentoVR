@@ -5,3 +5,4 @@ subj,mod,co,standard,stim,block,mod2,stim_letter,standard_letter,ord.st,trial,st
 1,multi_P,internal,30,25,1,multi,7--19,15--25,1,2,30,25,15--25,7--19,0,25,0.8,0,1,NA,NA
 1,multi_cong,external,30,22.5,1,multi,1--10,15--25,1,3,30,22.5,15--25,1--10,20,30,0.6,1,0,NA,NA
 1,proprio,external,30,22.5,1,multi,18--27,17--26,1,4,30,22.5,17--26,18--27,-20,30,0.8,0,1,NA,NA
+1,proprio,external,30,22.5,1,multi,18--27,17--26,1,4,30,22.5,17--26,18--27,-20,0,0.8,0,1,NA,NA
