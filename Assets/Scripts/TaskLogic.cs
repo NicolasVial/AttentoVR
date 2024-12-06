@@ -42,7 +42,10 @@ public class TaskLogic : MonoBehaviour
     private bool waitForAngleAnswer = false;
     private bool waitForOwnershipAnswer = false;
     private bool showOwnershipQuestion = false;
+    private bool waitForAgencyAnswer = false;
+    private bool showAgencyQuestion = false;
     private int angleAnswer = 0;
+    private int ownershipAnswer = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -82,60 +85,70 @@ public class TaskLogic : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.Alpha1))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 case 1:
                     if (Input.GetKeyDown(KeyCode.Alpha2))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 case 2:
                     if (Input.GetKeyDown(KeyCode.Alpha3))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 case 3:
                     if (Input.GetKeyDown(KeyCode.Alpha4))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 case 4:
                     if (Input.GetKeyDown(KeyCode.Alpha5))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 case 5:
                     if (Input.GetKeyDown(KeyCode.Alpha6))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 case 6:
                     if (Input.GetKeyDown(KeyCode.Alpha7))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 case 7:
                     if (Input.GetKeyDown(KeyCode.Alpha8))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 case 8:
                     if (Input.GetKeyDown(KeyCode.Alpha9))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 case 9:
                     if (Input.GetKeyDown(KeyCode.Alpha0))
                     {
                         PressOwnershipButton(i + 1);
+                        PressAgencyButton(i + 1);
                     }
                     break;
                 default:
@@ -197,7 +210,7 @@ public class TaskLogic : MonoBehaviour
             blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
         }
 
-        if (showOwnershipQuestion)
+        if ((showOwnershipQuestion && !showAgencyQuestion) || (!showOwnershipQuestion && showAgencyQuestion))
         {
             if (triggerCounter == 6)
             {
@@ -211,8 +224,21 @@ public class TaskLogic : MonoBehaviour
                 }
             }
         }
-        else
+        else if (showOwnershipQuestion && showAgencyQuestion)
         {
+            if (triggerCounter == 7)
+            {
+                trialCounter++;
+                triggerPressed = false;
+                triggerCounter = 0;
+                if (trialCounter <= nbTrials)
+                {
+                    pauseRec = false;
+                    SetupTrial();
+                }
+            }
+        }
+        else{
             if (triggerCounter == 5)
             {
                 trialCounter++;
@@ -355,9 +381,10 @@ public class TaskLogic : MonoBehaviour
         blurValue = float.Parse(parameters[trialCounter - 1][17]);
         seeArm = int.Parse(parameters[trialCounter - 1][18]) == 1 ? true : false;
         showOwnershipQuestion = int.Parse(parameters[trialCounter - 1][19]) == 1 ? true : false;
+        showAgencyQuestion = int.Parse(parameters[trialCounter - 1][20]) == 1 ? true : false;
     }
 
-    private void WriteTrialData(int answerAngleLarger, int answerOwnership)
+    private void WriteTrialData(int answerAngleLarger, int answerOwnership, int answerAgency)
     {
         string line = parameters[trialCounter - 1][0] + ",";
         line += parameters[trialCounter - 1][1] + ",";
@@ -379,10 +406,19 @@ public class TaskLogic : MonoBehaviour
         line += parameters[trialCounter - 1][17] + ",";
         line += parameters[trialCounter - 1][18] + ",";
         line += parameters[trialCounter - 1][19] + ",";
+        line += parameters[trialCounter - 1][20] + ",";
         line += answerAngleLarger.ToString();
         if (showOwnershipQuestion)
         {
             line += "," + answerOwnership.ToString();
+        }
+        else
+        {
+            line += ",NA";
+        }
+        if (showAgencyQuestion)
+        {
+            line += "," + answerAgency.ToString();
         }
         else
         {
@@ -441,9 +477,15 @@ public class TaskLogic : MonoBehaviour
                 waitForAngleAnswer = false;
                 StartCoroutine(EnableOwnershipQ());
             }
+            else if (showAgencyQuestion)
+            {
+                menuManager.HideChooseAngle();
+                waitForAngleAnswer = false;
+                StartCoroutine(EnableAgencyQ());
+            }
             else
             {
-                WriteTrialData(1, 0);
+                WriteTrialData(1, 0, 0);
                 menuManager.HideChooseAngle();
                 waitForAngleAnswer = false;
                 menuManager.ResetclickColors();
@@ -464,9 +506,14 @@ public class TaskLogic : MonoBehaviour
                 waitForAngleAnswer = false;
                 StartCoroutine(EnableOwnershipQ());
             }
-            else
+            else if (showAgencyQuestion)
             {
-                WriteTrialData(2, 0);
+                menuManager.HideChooseAngle();
+                waitForAngleAnswer = false;
+                StartCoroutine(EnableAgencyQ());
+            }
+            else{
+                WriteTrialData(2, 0, 0);
                 menuManager.HideChooseAngle();
                 waitForAngleAnswer = false;
                 menuManager.ResetclickColors();
@@ -479,9 +526,31 @@ public class TaskLogic : MonoBehaviour
         if (taskStarted && waitForOwnershipAnswer)
         {
             triggerCounter++;
-            WriteTrialData(angleAnswer, answer);
-            menuManager.HideOwnershipPanel();
-            waitForOwnershipAnswer = false;
+            ownershipAnswer = answer;
+            if (showAgencyQuestion)
+            {
+                menuManager.HideOwnershipPanel();
+                waitForOwnershipAnswer = false;
+                StartCoroutine(EnableAgencyQ());
+            }
+            else
+            {
+                WriteTrialData(angleAnswer, answer, 0);
+                menuManager.HideOwnershipPanel();
+                waitForOwnershipAnswer = false;
+                menuManager.ResetclickColors();
+            }
+        }
+    }
+
+    public void PressAgencyButton(int answer)
+    {
+        if (taskStarted && waitForAgencyAnswer)
+        {
+            triggerCounter++;
+            WriteTrialData(angleAnswer, ownershipAnswer, answer);
+            menuManager.HideAgencyPanel();
+            waitForAgencyAnswer = false;
             menuManager.ResetclickColors();
         }
     }
@@ -494,6 +563,14 @@ public class TaskLogic : MonoBehaviour
         yield return null;
     }
 
+    private IEnumerator EnableAgencyQ()
+    {
+        yield return new WaitForSeconds(0.2f);
+        menuManager.ShowAgencyPanel();
+        waitForAgencyAnswer = true;
+        yield return null;
+    }
+
     public void PressResetTrialButton()
     {
         if (taskStarted)
@@ -502,8 +579,10 @@ public class TaskLogic : MonoBehaviour
             menuManager.ResetclickColors();
             menuManager.HideChooseAngle();
             menuManager.HideOwnershipPanel();
+            menuManager.HideAgencyPanel();
             waitForAngleAnswer = false;
             waitForOwnershipAnswer = false;
+            waitForAgencyAnswer = false;
             SetupTrial();
         }
     }

@@ -17,6 +17,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject TaskPanel;
     [SerializeField] private GameObject chooseBiggerAnglePanel;
     [SerializeField] private GameObject ownershipPanel;
+    [SerializeField] private GameObject agencyPanel;
 
     [SerializeField] private TaskLogic taskLogic;
     [SerializeField] private TaskLogger taskLogger;
@@ -78,6 +79,7 @@ public class MenuManager : MonoBehaviour
         armVisualGO.SetActive(true);
         ResetclickColors();
         HideOwnershipPanel();
+        HideAgencyPanel();
     }
 
     public void ResetMenu()
@@ -217,5 +219,15 @@ public class MenuManager : MonoBehaviour
     public void HideOwnershipPanel()
     {
         ownershipPanel.SetActive(false);
+    }
+
+    public void ShowAgencyPanel()
+    {
+        agencyPanel.SetActive(true);
+    }
+
+    public void HideAgencyPanel()
+    {
+        agencyPanel.SetActive(false);
     }
 }
