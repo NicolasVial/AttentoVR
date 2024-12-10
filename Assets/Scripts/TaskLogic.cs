@@ -32,6 +32,7 @@ public class TaskLogic : MonoBehaviour
     private float secondAngleIncongruency = 0f;
     private bool isInternal = true;
     private bool seeArm = true;
+    private bool seeDot = true;
     private List<List<string>> parameters = new List<List<string>>();
     private float previousAngle = 0f;
 
@@ -324,6 +325,14 @@ public class TaskLogic : MonoBehaviour
                 menuManager.ShowGlassOnly();
             }
         }
+        if(seeDot)
+        {
+            menuManager.ShowDots();
+        }
+        else
+        {
+            menuManager.HideDots();
+        }
         blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
         StartCoroutine(FirstIncongrencyChange());
     }
@@ -380,8 +389,9 @@ public class TaskLogic : MonoBehaviour
         menuManager.SetConditionTxt("Condition: " + parameters[trialCounter - 1][2]);
         blurValue = float.Parse(parameters[trialCounter - 1][17]);
         seeArm = int.Parse(parameters[trialCounter - 1][18]) == 1 ? true : false;
-        showOwnershipQuestion = int.Parse(parameters[trialCounter - 1][19]) == 1 ? true : false;
-        showAgencyQuestion = int.Parse(parameters[trialCounter - 1][20]) == 1 ? true : false;
+        seeDot = int.Parse(parameters[trialCounter - 1][19]) == 1 ? true : false;
+        showOwnershipQuestion = int.Parse(parameters[trialCounter - 1][20]) == 1 ? true : false;
+        showAgencyQuestion = int.Parse(parameters[trialCounter - 1][21]) == 1 ? true : false;
     }
 
     private void WriteTrialData(int answerAngleLarger, int answerOwnership, int answerAgency)
@@ -407,6 +417,7 @@ public class TaskLogic : MonoBehaviour
         line += parameters[trialCounter - 1][18] + ",";
         line += parameters[trialCounter - 1][19] + ",";
         line += parameters[trialCounter - 1][20] + ",";
+        line += parameters[trialCounter - 1][21] + ",";
         line += answerAngleLarger.ToString();
         if (showOwnershipQuestion)
         {
