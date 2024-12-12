@@ -26,6 +26,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject fakeArmGO;
     [SerializeField] private GameObject handOnlyGO;
     [SerializeField] private GameObject armVisualGO;
+    [SerializeField] private GameObject[] dots;
 
     [SerializeField] private TextMeshProUGUI actualAngleTxt;
     [SerializeField] private TextMeshProUGUI incongruencyAngleTxt;
@@ -80,6 +81,7 @@ public class MenuManager : MonoBehaviour
         ResetclickColors();
         HideOwnershipPanel();
         HideAgencyPanel();
+        ShowDots();
     }
 
     public void ResetMenu()
@@ -150,6 +152,22 @@ public class MenuManager : MonoBehaviour
 
     public void HideChooseAngle() {
         chooseBiggerAnglePanel.SetActive(false);
+    }
+
+    public void ShowDots()
+    {
+        for (int i = 0; i < dots.Length; i++)
+        {
+            dots[i].SetActive(true);
+        }
+    }
+
+    public void HideDots()
+    {
+        for (int i = 0; i < dots.Length; i++)
+        {
+            dots[i].SetActive(false);
+        }
     }
 
     public void SetTrialNbTxt(string s)
