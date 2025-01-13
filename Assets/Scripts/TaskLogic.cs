@@ -184,8 +184,8 @@ public class TaskLogic : MonoBehaviour
                 menuManager.SetFourthClickImgColor(Color.green);
                 pauseRec = true;
                 secondAngle = previousAngle - incongruencyController.GetAngle();
-                blurValue = 0f;
-                blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
+                //blurValue = 0f;
+                //blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
                 waitForAngleAnswer = true;
                 menuManager.ShowChooseAngle();
             }
