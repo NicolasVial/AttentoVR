@@ -448,15 +448,26 @@ public class TaskLogic : MonoBehaviour
                 if(firstTime)
                 {
                     handPosLogger.StartTaskLogging();
-                    handPosLogger.WriteToFile("trial Nb,x pos,y pos,z pos");
+                    handPosLogger.WriteToFile("trial Nb, xPos, yPos, zPos, fixedPoint1, fixedPoint2, angle, incongruency, ord.st, condition, mod, stim1, stim2");
                     firstTime = false;
                 }
                 else
                 {
-                    string line = trialCounter.ToString() + ",";
-                    line += rightHand.transform.position.x.ToString() + ",";
-                    line += rightHand.transform.position.y.ToString() + ",";
-                    line += rightHand.transform.position.z.ToString();
+                    string line = trialCounter.ToString() + ", ";
+                    line += rightHand.transform.position.x.ToString() + ", ";
+                    line += rightHand.transform.position.y.ToString() + ", ";
+                    line += rightHand.transform.position.z.ToString() + ", ";
+                    string fixedPoint1 = "(" + incongruencyController.GetFixedPoint1().x.ToString() + ", " + incongruencyController.GetFixedPoint1().y.ToString() + ", " + incongruencyController.GetFixedPoint1().z.ToString() + ")";
+                    string fixedPoint2 = "(" + incongruencyController.GetFixedPoint2().x.ToString() + ", " + incongruencyController.GetFixedPoint2().y.ToString() + ", " + incongruencyController.GetFixedPoint2().z.ToString() + ")";
+                    line += fixedPoint1 + ", ";
+                    line += fixedPoint2 + ", ";
+                    line += incongruencyController.GetAngle().ToString() + ", ";
+                    line += incongruencyController.GetDiffAngle().ToString() + ", ";
+                    line += parameters[trialCounter - 1][9] + ", ";
+                    line += parameters[trialCounter - 1][2] + ", ";
+                    line += parameters[trialCounter - 1][1] + ", ";
+                    line += parameters[trialCounter - 1][11] + ", ";
+                    line += parameters[trialCounter - 1][12];
                     handPosLogger.WriteToFile(line);
                 }
             }

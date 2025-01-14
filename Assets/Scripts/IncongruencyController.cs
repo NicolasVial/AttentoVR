@@ -30,8 +30,8 @@ public class IncongruencyController : MonoBehaviour
     void Update()
     {
 
-        elbowSphere.transform.position = new Vector3(elbowSphere.transform.position.x, elbowSphere.transform.position.y, headset.transform.position.z + offset);
-        elbowSpherePoint2.transform.position = new Vector3(elbowSpherePoint2.transform.position.x, elbowSpherePoint2.transform.position.y, headset.transform.position.z + offset);
+        //elbowSphere.transform.position = new Vector3(elbowSphere.transform.position.x, elbowSphere.transform.position.y, headset.transform.position.z + offset);
+        //elbowSpherePoint2.transform.position = new Vector3(elbowSpherePoint2.transform.position.x, elbowSpherePoint2.transform.position.y, headset.transform.position.z + offset);
  
         /*
          * Get the angle formed by the line formed by the elbowSphere and elbowSpherePoint2 and the line formed by the elbowSphere and the rightHandPos in the x,z plan.
@@ -124,6 +124,16 @@ public class IncongruencyController : MonoBehaviour
     public float GetDiffAngle()
     {
         return diffAngleDegree;
+    }
+
+    public Vector3 GetFixedPoint1()
+    {
+        return elbowSphere.transform.position;
+    }
+
+    public Vector3 GetFixedPoint2()
+    {
+        return elbowSpherePoint2.transform.position;
     }
 
 }
