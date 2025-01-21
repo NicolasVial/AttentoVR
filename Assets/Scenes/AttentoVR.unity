@@ -3615,6 +3615,7 @@ MonoBehaviour:
   parametersReader: {fileID: 503879751}
   grayPanel: {fileID: 333717244}
   blurImg: {fileID: 722096114}
+  elbowDot: {fileID: 214486924}
   actualAngle: 0
   actualIncongruencyAngle: 0
 --- !u!4 &503879749

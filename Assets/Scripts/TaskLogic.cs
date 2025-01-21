@@ -16,6 +16,7 @@ public class TaskLogic : MonoBehaviour
     [SerializeField] private ParametersReader parametersReader;
     [SerializeField] private GameObject grayPanel;
     [SerializeField] private Image blurImg;
+    [SerializeField] private GameObject elbowDot;
 
     private int nbTrials = 1;
     private bool taskStarted = false;
@@ -23,8 +24,8 @@ public class TaskLogic : MonoBehaviour
     private int triggerCounter = 0;
     private bool isTaskFinished = false;
     private int trialCounter = 1;
-    private float firstAngle = 0f;
-    private float secondAngle = 0f;
+    private float firstAngle = 180f;
+    private float secondAngle = 180f;
     private float blurValue = 0f;
     private bool pauseRec = false;
     private Vector3 previousPos;
@@ -51,7 +52,7 @@ public class TaskLogic : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        elbowDot.SetActive(true);
     }
 
 
@@ -182,7 +183,7 @@ public class TaskLogic : MonoBehaviour
             if(triggerCounter == 4)
             {
                 menuManager.SetFourthClickImgColor(Color.green);
-                pauseRec = true;
+                
                 secondAngle = previousAngle - incongruencyController.GetAngle();
                 //blurValue = 0f;
                 //blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
@@ -200,8 +201,8 @@ public class TaskLogic : MonoBehaviour
             taskStarted = false;
             trialCounter = 1;
             triggerPressed = false;
-            firstAngle = 0f;
-            secondAngle = 0f;
+            firstAngle = 180f;
+            secondAngle = 180f;
             triggerCounter = 0;
             pauseRec = false;
             taskLogger.CloseFile();
@@ -209,6 +210,7 @@ public class TaskLogic : MonoBehaviour
             menuManager.ResetMenu();
             blurValue = 0f;
             blurImg.color = new Color(blurImg.color.r, blurImg.color.g, blurImg.color.b, blurValue);
+            elbowDot.SetActive(true);
         }
 
         if ((showOwnershipQuestion && !showAgencyQuestion) || (!showOwnershipQuestion && showAgencyQuestion))
@@ -275,6 +277,7 @@ public class TaskLogic : MonoBehaviour
 
     public void StartTask()
     {
+        elbowDot.SetActive(false);
         parameters = parametersReader.ReadParameters();
         nbTrials = parameters.Count;
         trialCounter = 1;
@@ -290,6 +293,8 @@ public class TaskLogic : MonoBehaviour
 
     private void SetupTrial()
     {
+        firstAngle = 180;
+        secondAngle = 180;
         trialNbTxt.text = trialCounter.ToString() + "/" + nbTrials.ToString();
         menuManager.SetTrialNbTxt("Trial " + trialCounter.ToString() + "/" + nbTrials.ToString());
         SetParameters(trialCounter);
@@ -448,7 +453,7 @@ public class TaskLogic : MonoBehaviour
                 if(firstTime)
                 {
                     handPosLogger.StartTaskLogging();
-                    handPosLogger.WriteToFile("trial Nb, xPos, yPos, zPos, fixedPoint1, fixedPoint2, angle, incongruency, ord.st, condition, mod, stim1, stim2");
+                    handPosLogger.WriteToFile("trial Nb, xPos, yPos, zPos, fixedPoint1, fixedPoint2, angle, incongruency, ord.st, condition, mod, stim1, stim2, actualStim1, actualStim2");
                     firstTime = false;
                 }
                 else
@@ -467,7 +472,12 @@ public class TaskLogic : MonoBehaviour
                     line += parameters[trialCounter - 1][2] + ", ";
                     line += parameters[trialCounter - 1][1] + ", ";
                     line += parameters[trialCounter - 1][11] + ", ";
-                    line += parameters[trialCounter - 1][12];
+                    line += parameters[trialCounter - 1][12] + ", ";
+                    bool firstAngleRecorded = firstAngle != 180;
+                    bool secondAngleRecorded = secondAngle != 180;
+                    string actualStim1 = firstAngleRecorded ? firstAngle.ToString() : "actualStim1 not yet recorded";
+                    string actualStim2 = secondAngleRecorded ? secondAngle.ToString() : "actualStim2 not yet recorded";
+                    line += actualStim1 + ", " + actualStim2;
                     handPosLogger.WriteToFile(line);
                 }
             }
